@@ -219,13 +219,6 @@ public abstract class BasePlugin<K extends BaseExtension> implements Plugin<Proj
                 "ext", "zip"
         ));
 
-        // Check FG Version, unless its disabled
-        List<String> lines = Lists.newArrayListWithExpectedSize(5);
-        Object disableUpdateCheck = project.getProperties().get("net.minecraftforge.gradle.disableUpdateChecker");
-        if (!"true".equals(disableUpdateCheck) && !"yes".equals(disableUpdateCheck) && !new Boolean(true).equals(disableUpdateCheck)) {
-            doFGVersionCheck(lines);
-        }
-
         if (!displayBanner)
             return;
 
@@ -240,9 +233,6 @@ public abstract class BasePlugin<K extends BaseExtension> implements Plugin<Proj
         logger.lifecycle("         R4wk, ZeuX, IngisKahn, bspkrs           ");
         logger.lifecycle("#################################################");
 
-        for (String str : lines)
-            logger.lifecycle(str);
-
         displayBanner = false;
     }
 
@@ -253,61 +243,6 @@ public abstract class BasePlugin<K extends BaseExtension> implements Plugin<Proj
         }
 
         return version;
-    }
-
-    protected void doFGVersionCheck(List<String> outLines) {
-        String version = getExtension().forgeGradleVersion;
-
-        if (version.endsWith("-SNAPSHOT")) {
-            // no version checking necessary if the are on the snapshot already
-            return;
-        }
-
-        final String checkUrl = "https://www.abrarsyed.com/ForgeGradleVersion.json";
-        final File jsonCache = cacheFile("ForgeGradleVersion.json");
-        final File etagFile = new File(jsonCache.getAbsolutePath() + ".etag");
-
-        FGVersionWrapper wrapper = JsonFactory.GSON.fromJson(getWithEtag(checkUrl, jsonCache, etagFile), FGVersionWrapper.class);
-        FGVersion webVersion = wrapper.versionObjects.get(version);
-        String latestVersion = wrapper.versions.get(wrapper.versions.size() - 1);
-
-        if (webVersion == null || webVersion.status == FGBuildStatus.FINE) {
-            return;
-        }
-
-        // broken implies outdated
-        if (webVersion.status == FGBuildStatus.BROKEN) {
-            outLines.add("ForgeGradle " + webVersion.version + " HAS " + (webVersion.bugs.length > 1 ? "SERIOUS BUGS" : "a SERIOUS BUG") + "!");
-            outLines.add("UPDATE TO " + latestVersion + " IMMEDIATELY!");
-            outLines.add(" Bugs:");
-            for (String str : webVersion.bugs) {
-                outLines.add(" -- " + str);
-            }
-            outLines.add("****************************");
-            return;
-        } else if (webVersion.status == FGBuildStatus.OUTDATED) {
-            outLines.add("ForgeGradle " + latestVersion + " is out! You should update!");
-            outLines.add(" Features:");
-
-            for (int i = webVersion.index; i < wrapper.versions.size(); i++) {
-                for (String feature : wrapper.versionObjects.get(wrapper.versions.get(i)).changes) {
-                    outLines.add(" -- " + feature);
-                }
-            }
-            outLines.add("****************************");
-        }
-
-        onVersionCheck(webVersion, wrapper);
-    }
-
-    /**
-     * Function to do stuff with the version check json information. Is called afterEvaluate
-     *
-     * @param version The ForgeGradle version
-     * @param wrapper Version wrapper
-     */
-    protected void onVersionCheck(FGVersion version, FGVersionWrapper wrapper) {
-        // not required.. but you probably wanan implement this
     }
 
     @SuppressWarnings("serial")

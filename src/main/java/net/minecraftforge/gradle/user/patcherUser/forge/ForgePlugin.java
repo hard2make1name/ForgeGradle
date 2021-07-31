@@ -129,28 +129,6 @@ public class ForgePlugin extends PatcherUserBasePlugin<ForgeExtension> {
     }
 
     @Override
-    protected void onVersionCheck(FGVersion version, FGVersionWrapper wrapper) {
-        String forgeVersion = getExtension().getForgeVersion();
-
-        // isolate build number
-        int index = forgeVersion.indexOf('-');
-        if (index >= 0)
-            forgeVersion = forgeVersion.substring(0, index);
-        index = forgeVersion.lastIndexOf('.');
-        forgeVersion.substring(index + 1);
-
-        int buildNum = Integer.parseInt(forgeVersion);
-
-        int minBuild = version.ext.get("forgeMinBuild").getAsInt();
-        int maxBuild = version.ext.get("forgeMaxBuild").getAsInt();
-
-        if (buildNum < minBuild)
-            throw new GradleConfigurationException("This version of ForgeGradle (" + getExtension().forgeGradleVersion + ") does not support forge builds less than #" + minBuild);
-        else if (buildNum > maxBuild)
-            throw new GradleConfigurationException("This version of ForgeGradle (" + getExtension().forgeGradleVersion + ") does not support forge builds greater than #" + maxBuild);
-    }
-
-    @Override
     public String getApiGroup(ForgeExtension ext) {
         return "net.minecraftforge";
     }

@@ -25,6 +25,8 @@ repositories {
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
 
+    maven { url = "https://repo.spongepowered.org/repository/forge-proxy/" }
+
 
     // because of the GradleStart stuff
     maven {

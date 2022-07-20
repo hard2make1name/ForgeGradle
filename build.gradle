@@ -41,6 +41,8 @@ configurations {
     deployerJars
     shade
     compileOnly.extendsFrom shade
+    include
+    implementation.extendsFrom(include)
 }
 
 // Required because Srg2Source depends on a snapshot of JDT that is no longer published on forge maven
@@ -59,9 +61,9 @@ dependencies {
     implementation 'org.ow2.asm:asm-debug-all:5.0.3'
     implementation 'com.google.guava:guava:18.0'
 
-    implementation('club.chachy:GitVersion:394b3c5363') {
-        exclude module: 'org.eclipse.jgit'
-    }
+    // implementation('club.chachy:GitVersion:394b3c5363') {
+    //     exclude module: 'org.eclipse.jgit'
+    // }
 
     shade "org.eclipse.jgit:org.eclipse.jgit:5.11.0.202103091610-r"
 
@@ -97,6 +99,7 @@ dependencies {
     compileOnly "net.minecraft:launchwrapper:1.11"
 
     testImplementation 'junit:junit:4.12'
+    include fileTree(include: ["*.jar"], dir: "libs")
 }
 
 sourceSets {

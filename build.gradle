@@ -43,8 +43,6 @@ configurations {
     deployerJars
     shade
     compileOnly.extendsFrom shade
-    include
-    implementation.extendsFrom(include)
 }
 
 // Required because Srg2Source depends on a snapshot of JDT that is no longer published on forge maven
@@ -101,7 +99,7 @@ dependencies {
     compileOnly "net.minecraft:launchwrapper:1.11"
 
     testImplementation 'junit:junit:4.12'
-    include fileTree(include: ["*.jar"], dir: "libs")
+    shade fileTree(include: ["*.jar"], dir: "libs")
 }
 
 sourceSets {
